@@ -1,0 +1,80 @@
+# Ignore build directories
+/build/
+/bin/
+/out/
+/Debug/
+/Release/
+
+# Ignore Visual Studio specific files
+.vscode/
+.vs/
+*.suo
+*.user
+*.userossc
+*.usertask
+*.VC.db
+*.VC.VC.opendb
+
+# Ignore Windows specific files
+*.exe
+*.dll
+*.pdb
+*.lib
+*.obj
+*.idb
+*.ipch
+*.log
+*.tlog
+*.lastbuildstate
+*.sdf
+*.opensdf
+*.vcxproj.user
+*.VC.opendb
+
+# Ignore Unix specific files
+*.o
+*.a
+*.so
+
+# Ignore IDE-specific files
+*.idea/
+.idea/
+*.iml
+
+# Ignore CMake generated files
+CMakeFiles/
+CMakeCache.txt
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+
+# Ignore code coverage files
+*.gcno
+*.gcda
+*.gcov
+
+# Ignore auto-generated files
+*.gch
+*.pch
+*.pdb
+*.dSYM/
+*.DS_Store
+*.ncb
+*.aps
+*.ilk
+
+# Ignore backup files
+*~
+*.swp
+*.bak
+*.tmp
+
+# Ignore generated documentation
+docs/
+*.html
+*.pdf
+*.doc
+*.docx
