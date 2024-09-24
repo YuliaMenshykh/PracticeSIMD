@@ -6,63 +6,43 @@
     simdTime QWORD ?   ; Store 64-bit timing results
     loopTime QWORD ?
 
-    PUBLIC simd_addition
-    PUBLIC loop_addition
-    PUBLIC get_result_array
-    PUBLIC simdTime
-    PUBLIC loopTime
+    PUBLIC simdAddition
+    PUBLIC loopAddition
+    PUBLIC getResultArray
 
 .code
-simd_addition PROC
-    ; Measure SIMD Addition Performance
-    rdtsc
-    mov rbx, rax ; Save start time
-
-    ; SIMD Addition using AVX2
+simdAddition PROC
     vmovdqu ymm0, YMMWORD PTR array1
     vmovdqu ymm1, YMMWORD PTR array2
-
     vpaddd ymm0, ymm0, ymm1
 
     vmovdqu YMMWORD PTR resultArray, ymm0
-
-    ; Measure end time for SIMD
-    rdtsc
-    sub rax, rbx
-    mov simdTime, rax
     ret
-simd_addition ENDP
+simdAddition ENDP
 
-loop_addition PROC
-    ; Measure Loop-based Addition Performance
-    rdtsc
-    mov rbx, rax ; Save start time (use rbx for 64-bit registers)
 
-    mov rcx, 8               ; Number of elements in arrays (use rcx for 64-bit loop counter)
-    lea rsi, [array1]        ; Load address of array1 into rsi
-    lea rdi, [array2]        ; Load address of array2 into rdi
-    lea rdx, [resultArray]   ; Load address of resultArray into rdx
+loopAddition PROC
+    mov rcx, 8          ; loop counter
+    lea rsi, [array1]        
+    lea rdi, [array2]        
+    lea rdx, [resultArray]  
+    
+loopStart:
+    mov rbx, [rsi]           
+    add rbx, [rdi]     
+    mov [rdx], rbx
 
-loop_start:
-    mov eax, [rsi]           ; Load element from array1
-    add eax, [rdi]           ; Add element from array2
-    mov [rdx], eax           ; Store result in resultArray
-
-    add rsi, 4               ; Move to next element (4 bytes for DWORD)
+    add rsi, 4      ; Move to next element
     add rdi, 4
     add rdx, 4
-    loop loop_start
+    loop loopStart
 
-    ; Measure end time for loop
-    rdtsc
-    sub rax, rbx
-    mov loopTime, rax        ; Store time in 64-bit variable
     ret
-loop_addition ENDP
+loopAddition ENDP
 
-get_result_array PROC
+getResultArray PROC
     mov rax, OFFSET resultArray
     ret
-get_result_array ENDP
+getResultArray ENDP
 
 END
