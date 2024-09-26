@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>Y:\PracticeSIMD\SIMDPractice\05_StringProcessing\SIMD\StringProcessing\x64\Debug\StringProcessing.exe</FullPath>
+      <FullPath>Y:\PracticeSIMD\SIMDPractice\02_DataAlignmentandMemoryAccess\SIMD\Assembly\DataAlignment\x64\Debug\DataAlignment.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

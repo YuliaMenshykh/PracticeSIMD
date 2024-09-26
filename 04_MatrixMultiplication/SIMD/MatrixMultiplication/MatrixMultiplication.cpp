@@ -38,17 +38,16 @@ void simpleMatrixMul(const float* matrix1, const float* matrix2, float* result, 
     std::cout << "Simple matrix mult took: "
         << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " ms\n";
 
-    //MatrixPrint(matrix1, numRows, numCols, "Matrix 1:");
-    //MatrixPrint(matrix2, numRows, numCols, "Matrix 2:");
     MatrixPrint(result, numRows, numCols, "Result (Matrix 3):");
 }
 void simdMatrixMul(const float* matrix1, const float* matrix2, float* result, int numRows, int numCols)
 {
-    auto start = std::chrono::high_resolution_clock::now();
+   
     matrix1 = std::assume_aligned<32>(matrix1);
     matrix2 = std::assume_aligned<32>(matrix2);
     result = std::assume_aligned<32>(result);
 
+    auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < numRows; ++i)
     {
         for (int j = 0; j < numCols; ++j)
@@ -78,22 +77,18 @@ void simdMatrixMul(const float* matrix1, const float* matrix2, float* result, in
             // Reduce the 8 floats in sum into a single scalar value
             __m128 vhigh = _mm256_extractf128_ps(sum, 1);  // Extract high 128 bits (upper 4 floats)
             __m128 vresult = _mm_add_ps(_mm256_castps256_ps128(sum), vhigh);  // Add upper and lower 4 floats
-            vresult = _mm_hadd_ps(vresult, vresult);  // Horizontal add: now we have 2 floats
-            vresult = _mm_hadd_ps(vresult, vresult);  // Final horizontal add: 1 float
+            vresult = _mm_hadd_ps(vresult, vresult);  // Horizontal add
+            vresult = _mm_hadd_ps(vresult, vresult);  // Final horizontal add
 
             // Store the result in the result matrix
             result[i * numCols + j] = _mm_cvtss_f32(vresult);
         }
     }
 
-
     auto end = std::chrono::high_resolution_clock::now();
     std::cout << "SIMD matrix multiplication took: "
         << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " microseconds\n";
 
-    // Optional: Print matrices (assuming MatrixPrint is defined elsewhere)
-    //MatrixPrint(matrix1, numRows, numCols, "Matrix 1:");
-    //MatrixPrint(matrix2, numRows, numCols, "Matrix 2:");
     MatrixPrint(result, numRows, numCols, "SIMD Result (Matrix 3):");
 }
 
@@ -112,6 +107,12 @@ int main()
         matrix1[i] = i;
         matrix2[i] = i + 5;
     }
+
+    
+    MatrixPrint(matrix1, numRows, numCols, "Matrix 1:");
+    MatrixPrint(matrix2, numRows, numCols, "Matrix 2:");
+    
+
 
     // Perform simple matrix multiplication
     simpleMatrixMul(matrix1, matrix2, result, numRows, numCols);

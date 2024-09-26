@@ -11,12 +11,13 @@
     PUBLIC getResultArray
 
 .code
+
 simdAddition PROC
     vmovdqu ymm0, YMMWORD PTR array1
     vmovdqu ymm1, YMMWORD PTR array2
     vpaddd ymm0, ymm0, ymm1
-
     vmovdqu YMMWORD PTR resultArray, ymm0
+
     ret
 simdAddition ENDP
 

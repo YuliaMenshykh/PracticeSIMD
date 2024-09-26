@@ -14,21 +14,18 @@ void simdAddition(const int* data1, const int* data2, int* result, int arraySize
 	int simdWidth = 8;
 	int i = 0;
 
-	// Ensure data is aligned to 32 bytes for AVX2
+	// Ensure data is aligned to 32 bytes
 	data1 = (int*)std::assume_aligned<32>(data1);
 	data2 = (int*)std::assume_aligned<32>(data2);
 	result = (int*)std::assume_aligned<32>(result);
 
-	// Process in chunks of 8 integers using AVX2
-	for (i = 0; i <= arraySize - simdWidth; i += simdWidth)
+	// Process in chunks of 8 integers
+	for (i = 0; i + simdWidth <= arraySize; i += simdWidth)
 	{
 		__m256i vec1 = _mm256_load_si256((__m256i*) & data1[i]);
 		__m256i vec2 = _mm256_load_si256((__m256i*) & data2[i]);
 
-		// Perform vectorized addition
 		__m256i vecResult = _mm256_add_epi32(vec1, vec2);
-
-		// Store the result
 		_mm256_store_si256((__m256i*) & result[i], vecResult);
 	}
 
@@ -53,7 +50,6 @@ int main()
 
 	//Loop based addition
 	auto start_loop = std::chrono::high_resolution_clock::now();
-
 	simpleAddition(data1, data2, result, size);
 
 	auto end_loop = std::chrono::high_resolution_clock::now();
@@ -62,28 +58,26 @@ int main()
 	std::cout << duration.count() << " ms" << std::endl;
 	// Print first 15 results
 	std::cout << "Result of loop based addition (first 15 results): " << '\n' 
-		<< "Printing only the first 15 results because printing all 10,000,000 results would take too long." << '\n';
+		<< "Printing only the first 15 results because printing all 10 000 000 results would take too long." << '\n';
 	for (int i = 0; i < 15; ++i) {
 		std::cout << result[i] << " ";  
 	}
-	std::cout << std::endl;
+	std::cout <<"\n" << std::endl;
 
 
 	//SIMD addition
-
 	start_loop = std::chrono::high_resolution_clock::now();
-
 	simdAddition(data1, data2, result, size);
 
 	end_loop = std::chrono::high_resolution_clock::now();
 	duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_loop - start_loop);
-	std::cout << "Loop addition took : ";
+	std::cout << "SIMD addition took : ";
 	std::cout << duration.count() << " ms" << std::endl;
 
 	std::cout << "Result of SIMD addition (first 15 results): ";
 	// Print first 15 results
 	for (int i = 0; i < 15; ++i) {
-		std::cout << result[i] << " ";  // Print the result
+		std::cout << result[i] << " ";
 	}
 	std::cout << std::endl;
 

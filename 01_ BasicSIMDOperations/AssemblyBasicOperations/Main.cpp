@@ -9,7 +9,7 @@ int main()
 {
     // Measure simple loop based addition
     auto start = std::chrono::high_resolution_clock::now();
-    for (size_t i = 0; i < 100; i++)
+    for (size_t i = 0; i < 1000; i++)
     {
         loopAddition();
     }
@@ -29,7 +29,7 @@ int main()
 
     // Measure SIMD addition
     start = std::chrono::high_resolution_clock::now();
-    for (size_t i = 0; i < 100; i++)
+    for (size_t i = 0; i < 1000; i++)
     {
         simdAddition();
     }

@@ -1,14 +1,16 @@
 #include <iostream>
 #include <chrono>
-#include <immintrin.h>  // For AVX2 intrinsics
+#include <immintrin.h> 
 #include <cstring>
 
 // Loop-based substring searching function
-int countSubstringLoop(const std::string& str, const std::string& substr) {
+int countSubstringLoop(const std::string& str, const std::string& substr) 
+{
     int count = 0;
     size_t pos = 0;
 
-    while ((pos = str.find(substr, pos)) != std::string::npos) {
+    while ((pos = str.find(substr, pos)) != std::string::npos) 
+    {
         ++count;
         pos += substr.size();
     }
@@ -16,39 +18,37 @@ int countSubstringLoop(const std::string& str, const std::string& substr) {
     return count;
 }
 
-// SIMD-based substring searching function using AVX2
-int countSubstringSIMD(const std::string& str, const std::string& substr) {
+int countSubstringSIMD(const std::string& str, const std::string& substr)
+{
     const char* largerStr = str.c_str();
     const char* subStr = substr.c_str();
     int strLen = str.length();
     int substrLen = substr.length();
     int count = 0;
 
-    if (substrLen > 32) {
-        std::cerr << "Substring too large for AVX2." << std::endl;
-        return -1;
-    }
-
-    // Pad the substring to be 32 bytes using AVX2 (since AVX2 can work on 256 bits/32 bytes)
+   
+    // Pad the substring to be 32 bytes
     char paddedSubStr[32] = { 0 };
     std::memcpy(paddedSubStr, subStr, substrLen);
 
     __m256i substrVec = _mm256_loadu_si256((__m256i*)paddedSubStr);
 
-    for (int i = 0; i <= strLen - substrLen; i += 32) {
+    for (int i = 0; i <= strLen - substrLen; ++i)
+    {
+        // Load 32 bytes from the larger string at offset i
         __m256i strVec = _mm256_loadu_si256((__m256i*)(largerStr + i));
+
+        // Compare the 32 bytes from the larger string with the substring
         __m256i cmpMask = _mm256_cmpeq_epi8(strVec, substrVec);
         int mask = _mm256_movemask_epi8(cmpMask);
 
-        // Check if there's a full match in any byte
-        if (mask != 0) {
-            // Check each potential match for full equality
-            for (int j = 0; j < 32; ++j) {
-                if (i + j + substrLen <= strLen) {
-                    if (std::strncmp(largerStr + i + j, subStr, substrLen) == 0) {
-                        ++count;
-                    }
-                }
+        if (mask != 0)
+        {
+            // Check if there's a full match for the substring
+            if (std::strncmp(largerStr + i, subStr, substrLen) == 0)
+            {
+                ++count;
+                i += substrLen - 1;  // Skip ahead by the length of the substring
             }
         }
     }
@@ -56,9 +56,10 @@ int countSubstringSIMD(const std::string& str, const std::string& substr) {
     return count;
 }
 
-int main() {
-    std::string largerString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet.";
-    std::string substring = "ipsum";
+int main() 
+{
+    std::string largerString = "The instruction pointer register points to the next instruction to execute";
+    std::string substring = "to";
 
     // Measure time for loop-based search
     auto startLoop = std::chrono::high_resolution_clock::now();
